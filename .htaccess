@@ -1,0 +1,18 @@
+location / {
+if (!-e $request_filename){
+	rewrite  ^(.*)$  /index.php?s=$1  last;   break;
+}
+}
+
+echo "<pre>";print_r($list);echo "<pre>";die;
+appends('user') // 和with类似
+
+getRules
+
+use app\admin\controller\CourseguideController;
+(new CourseguideController())->getTeachers();
+
+$list = Db::name('users')
+            ->where('type', '=', 1)
+            ->order("id desc")
+            ->column('*','id');
