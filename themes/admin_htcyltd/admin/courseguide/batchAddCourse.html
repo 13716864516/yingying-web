@@ -49,20 +49,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label"><span class="form-required">*</span>日期范围</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" class="layui-input js-bootstrap-date" name="startdate"
-                                           value="{:input('request.startdate')}"
-                                           autocomplete="off" placeholder="开课日期(本课程)">
-                                </div>
-                                <div class="layui-form-mid">~</div>
-                                <div class="layui-input-inline">
-                                    <input type="text" class="layui-input js-bootstrap-date" name="enddate"
-                                           value="{:input('request.enddate')}"
-                                           autocomplete="off" placeholder="结课日期">
-                                </div>
-                            </div>
+
                             <div class="layui-inline">
                                 <label class="layui-form-label"><span class="form-required">*</span>老师</label>
                                 <div class="layui-input-inline">
@@ -120,19 +107,29 @@
                             <!--                                    </div>-->
                             <!--                                </div>-->
                             <!--                                </if>-->
+                            <div class="layui-inline">
+                                <label class="layui-form-label"><span class="form-required">*</span>日期范围</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input js-bootstrap-date" name="startdate"
+                                           value="{:input('request.startdate')}"
+                                           autocomplete="off" placeholder="开课日期(本课程)">
+                                </div>
+                                <div class="layui-form-mid">~</div>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input js-bootstrap-date" name="enddate"
+                                           value="{:input('request.enddate')}"
+                                           autocomplete="off" placeholder="结课日期">
+                                </div>
+                            </div>
 
                             <div class="layui-inline">
                                 <label class="layui-form-label"><span class="form-required">*</span>上课时间</label>
                                 <div class="layui-input-inline">
-                                    <input type="time" class="layui-input js-bootstrap-time" name="startcoursetime"
-                                           value="{:input('request.startcoursetime')}"
-                                           autocomplete="off" placeholder="上课时间">
-                                </div>
-                                <div class="layui-form-mid">~</div>
-                                <div class="layui-input-inline">
-                                    <input type="time" class="layui-input js-bootstrap-time" name="endcoursetime"
-                                           value="{:input('request.endcoursetime')}"
-                                           autocomplete="off" placeholder="下课时间">
+                                    <select class="form-control" name="coursetimeid">
+                                        <volist name="coursetimes" id="v">
+                                            <option value="{$key}" <if condition="input('request.coursetimeid') neq '' && input('request.coursetimeid') eq $key">selected</if>>{$v}</option>
+                                        </volist>
+                                    </select>
                                 </div>
                             </div>
                             <!--                                <div class="layui-inline">-->

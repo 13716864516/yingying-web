@@ -108,17 +108,30 @@
                             <!--                                </if>-->
 
                             <div class="layui-inline">
+                                <label class="layui-form-label"><span class="form-required">*</span>上课日期</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input js-bootstrap-date" name="startdate"
+                                           value="{:input('request.startdate')}"
+                                           autocomplete="off" placeholder="上课日期">
+                                </div>
+                            </div>
+
+                            <div class="layui-inline">
                                 <label class="layui-form-label"><span class="form-required">*</span>上课时间</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" class="layui-input js-bootstrap-datetime" name="starttime"
-                                           value="{:input('request.starttime')}"
-                                           autocomplete="off" placeholder="开始日期">
+                                    <select class="form-control" name="startcoursetime">
+                                        <volist name="coursetimes" id="v">
+                                            <option value="{$v['startcoursetime']}" <if condition="input('request.startcoursetime') neq '' && input('request.startcoursetime') eq $v['startcoursetime']">selected</if>>{$v['startcoursetime']}</option>
+                                        </volist>
+                                    </select>
                                 </div>
                                 <div class="layui-form-mid">~</div>
                                 <div class="layui-input-inline">
-                                    <input type="text" class="layui-input js-bootstrap-datetime" name="endtime"
-                                           value="{:input('request.endtime')}"
-                                           autocomplete="off" placeholder="结束日期">
+                                    <select class="form-control" name="endcoursetime">
+                                        <volist name="coursetimes" id="v">
+                                            <option value="{$v['endcoursetime']}" <if condition="input('request.endcoursetime') neq '' && input('request.endcoursetime') eq $v['endcoursetime']">selected</if>>{$v['endcoursetime']}</option>
+                                        </volist>
+                                    </select>
                                 </div>
                             </div>
                             <!--                                <div class="layui-inline">-->

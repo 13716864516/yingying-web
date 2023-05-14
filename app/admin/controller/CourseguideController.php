@@ -534,6 +534,7 @@ class CourseguideController extends AdminBaseController
             'list'       => [],
             'page'       => '',
             'sort'       => $sort,
+            'coursetimes'     => $this->getCourseTime(),
             'teachers'     => $this->getTeachers(),
             'classrooms'     => $this->getClassrooms(),
             'status'     => $this->getStatus(),
@@ -562,11 +563,17 @@ class CourseguideController extends AdminBaseController
             $this->assign('types', $this->getTypes());
         }
 
+        $coursetimes = $this->getCourseTime();
+        $coursetimes = array_map(function ($v) {
+            return $v['startcoursetime'].' ~ '.$v['endcoursetime'];
+        }, $coursetimes);
+
         $this->assign('classs', $this->getClass());
         $this->assign([
             'list'       => [],
             'page'       => '',
             'sort'       => $sort,
+            'coursetimes'     => $coursetimes,
             'teachers'     => $this->getTeachers(),
             'classrooms'     => $this->getClassrooms(),
             'status'     => $this->getStatus(),
@@ -801,10 +808,14 @@ class CourseguideController extends AdminBaseController
             }
 
             $nowtime     = time();
+            $startdate = $data['startdate'];
+            if ($startdate == '') {
+                $this->error('请填写上课日期');
+            }
 
             $coursetime = $this->getCourseTime();
 
-            $starttime = $data['starttime'];
+            $starttime = $data['startdate'].' '.$data['startcoursetime'];
             if ($starttime == '') {
                 $this->error('请填写上课时间');
             } else {
@@ -817,7 +828,7 @@ class CourseguideController extends AdminBaseController
             }
             $data['starttime'] = strtotime($starttime);
 
-            $endtime = $data['endtime'];
+            $endtime = $data['startdate'].' '.$data['endcoursetime'];
             if ($endtime == '') {
                 $this->error('请填写下课时间');
             } else {
@@ -906,30 +917,14 @@ class CourseguideController extends AdminBaseController
                 $this->error('结课日期不能早于开课日期');
             }
 
-            $coursetime = $this->getCourseTime();
-
-            $startcoursetime = $data['startcoursetime'];
-            if ($startcoursetime == '') {
-                $this->error('请填写上课时间');
+            $coursetimeid = $data['coursetimeid'];
+            if ($coursetimeid == '') {
+                $this->error('请选择上课时间');
             } else {
-                $starttimearr = array_column($coursetime, 'startcoursetime');
-                if (!in_array($startcoursetime, $starttimearr)) {
-                    $this->error('上课时间不符合规范：'.implode('、', $starttimearr));
-                }
-            }
-
-            $endcoursetime = $data['endcoursetime'] == '00:00'?'12:00':$data['endcoursetime'];
-            if ($endcoursetime == '') {
-                $this->error('请填写下课时间');
-            } else {
-                $endtimearr = array_column($coursetime, 'endcoursetime');
-                if (!in_array($endcoursetime, $endtimearr)) {
-                    $this->error('下课时间不符合规范：'.implode('、', $endtimearr));
-                }
-            }
-
-            if ($data['startcoursetime'] >= $data['endcoursetime']) {
-                $this->error('下课时间不能早于上课时间');
+                $coursetimes = $this->getCourseTime();
+                $coursetime = $coursetimes[$coursetimeid];
+                $startcoursetime = $coursetime['startcoursetime'];
+                $endcoursetime = $coursetime['endcoursetime'];
             }
 
             $data['addtime'] = $nowtime;
