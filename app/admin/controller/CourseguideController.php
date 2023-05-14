@@ -1102,6 +1102,7 @@ class CourseguideController extends AdminBaseController
 
             $data['addtime'] = $nowtime;
             $data['status'] = 1;
+            $data['lessons'] = 1;
 
             $first_time = $startdate.' '.$startcoursetime; // 开课日期+上课时间
             $first_time = strtotime($first_time);
