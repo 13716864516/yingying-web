@@ -86,20 +86,45 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="layui-inline">
+                                <label class="layui-form-label"><span class="form-required">*</span>上课日期</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input js-bootstrap-date" name="startdate"
+                                           value="{$data.startdate}"
+                                           autocomplete="off" placeholder="上课日期">
+                                </div>
+                            </div>
+
                             <div class="layui-inline">
                                 <label class="layui-form-label"><span class="form-required">*</span>上课时间</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" class="layui-input js-bootstrap-datetime" name="starttime"
-                                           value="{:date('Y-m-d H:i:s',$data.starttime)}"
-                                           autocomplete="off" placeholder="开始日期">
+                                    <select class="form-control" name="startcoursetime">
+                                        <volist name="coursetimes" id="v">
+                                            <option value="{$v['startcoursetime']}"
+                                            <eq name="$data['startcoursetime']" value="$v['startcoursetime']">selected</eq>
+                                            >{$v['startcoursetime']}</option>
+                                        </volist>
+                                    </select>
                                 </div>
                                 <div class="layui-form-mid">~</div>
                                 <div class="layui-input-inline">
-                                    <input type="text" class="layui-input js-bootstrap-datetime" name="endtime"
-                                           value="{:date('Y-m-d H:i:s',$data.endtime)}"
-                                           autocomplete="off" placeholder="结束日期">
+                                    <select class="form-control" name="endcoursetime">
+                                        <volist name="coursetimes" id="v">
+                                            <option value="{$v['endcoursetime']}"
+                                            <eq name="$data['endcoursetime']" value="$v['endcoursetime']">selected</eq>
+                                            >{$v['endcoursetime']}</option>
+                                        </volist>
+                                    </select>
                                 </div>
                                 <div class="layui-form-mid">{:$weeks[date('w',$data.starttime)]}</div>
+                            </div>
+
+                            <div class="layui-inline">
+                                <label class="layui-form-label">消耗课时</label>
+                                <div class="layui-input-inline">
+                                    <input type="number" class="layui-input" name="lessons" value="{$data['lessons']}" placeholder="1">
+                                </div>
                             </div>
                             <!--                                <div class="layui-inline">-->
                             <!--                                    <label class="layui-form-label">用户ID</label>-->

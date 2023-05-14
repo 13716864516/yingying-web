@@ -626,6 +626,10 @@ class CourseguideController extends AdminBaseController
             $this->error("信息错误");
         }
 
+        $data['startdate'] = date('Y-m-d', $data['starttime']);
+        $data['startcoursetime'] = date('H:i', $data['starttime']);
+        $data['endcoursetime'] = date('H:i', $data['endtime']);
+
         $this->assign('data', $data);
 
         $sort = $data['sort'];
@@ -652,6 +656,7 @@ class CourseguideController extends AdminBaseController
         $this->assign([
             'list'     => $list,
             'page'     => $page,
+            'coursetimes'     => $this->getCourseTime(),
             'studentcount'     => $studentcount,
             'weeks'     => $this->getWeeks(),
             'sex'     => $this->getSex(),
@@ -778,7 +783,7 @@ class CourseguideController extends AdminBaseController
             $sort = $data['sort'] ?? '';
             $uid  = $data['uid'] ?? '';
             if ($uid == '') {
-                $this->error('请填写主讲老师ID');
+                $this->error('请填写主讲老师');
             }
             $isexist = UsersModel::field('type')->where('id', '=', $uid)->find();
             if (!$isexist) {
@@ -848,6 +853,8 @@ class CourseguideController extends AdminBaseController
             $data['addtime'] = $nowtime;
             $data['status'] = 1;
 
+            $this->checkCourse($data);
+
             $CourseCopyModel = CourseCopyModel::create($data, true);
             if (!$CourseCopyModel) {
                 $this->error("添加失败！");
@@ -872,14 +879,14 @@ class CourseguideController extends AdminBaseController
             $sort = $data['sort'] ?? '';
             $uid  = $data['uid'] ?? '';
             if ($uid == '') {
-                $this->error('请填写主讲老师ID');
+                $this->error('请填写主讲老师');
             }
             $isexist = UsersModel::field('type')->where('id', '=', $uid)->find();
             if (!$isexist) {
                 $this->error('该主讲老师不存在');
             }
             if ($isexist['type'] != 1) {
-                $this->error('该ID还不是老师');
+                $this->error('该用户还不是老师');
             }
 
             if ($sort >= 1) {
@@ -894,7 +901,7 @@ class CourseguideController extends AdminBaseController
                         $this->error('该辅导老师不存在');
                     }
                     if ($isexist['type'] != 1) {
-                        $this->error('该ID还不是老师');
+                        $this->error('该用户还不是老师');
                     }
                 } else {
                     $data['tutoruid'] = 0;
@@ -941,6 +948,16 @@ class CourseguideController extends AdminBaseController
             while ($endtime <= $final_time) {
                 $data['starttime'] = $starttime;
                 $data['endtime'] = $endtime;
+                $isexists = DB::name('course_copy')
+                    ->where('uid', '=', $data['uid'])
+                    ->where('starttime', '=', $data['starttime'])
+                    ->where('status', '<>', -1)
+                    ->find();
+                if ($isexists) {
+                    $starttime += 60*60*24*7;
+                    $endtime += 60*60*24*7;
+                    continue; // 已存在课程就跳过
+                }
                 CourseCopyModel::create($data, true);
                 $starttime += 60*60*24*7;
                 $endtime += 60*60*24*7;
@@ -1001,7 +1018,7 @@ class CourseguideController extends AdminBaseController
             $sort = $data['sort'] ?? '';
             $uid  = $data['uid'] ?? '';
             if ($uid == '') {
-                $this->error('请填写主讲老师ID');
+                $this->error('请填写主讲老师');
             }
             $isexist = UsersModel::field('type')->where('id', '=', $uid)->find();
             if (!$isexist) {
@@ -1032,17 +1049,29 @@ class CourseguideController extends AdminBaseController
 
             $nowtime     = time();
 
-            $starttime = $data['starttime'];
-            if ($starttime == '') {
+            $startdate = $data['startdate'];
+            if ($startdate == '') {
+                $this->error('请填写上课日期');
+            }
+
+            $startcoursetime = $data['startcoursetime'];
+            if ($startcoursetime == '') {
                 $this->error('请填写上课时间');
             }
-            $data['starttime'] = strtotime($starttime);
 
-            $endtime = $data['endtime'];
-            if ($endtime == '') {
+            $endcoursetime = $data['endcoursetime'];
+            if ($endcoursetime == '') {
                 $this->error('请填写下课时间');
             }
+
+            $starttime = $startdate.' '.$startcoursetime;
+            $data['starttime'] = strtotime($starttime);
+
+            $endtime = $startdate.' '.$endcoursetime;
             $data['endtime'] = strtotime($endtime);
+            unset($data['startdate']);
+            unset($data['startcoursetime']);
+            unset($data['endcoursetime']);
 
             if ($data['starttime'] >= $data['endtime']) {
                 $this->error('下课时间不能早于上课时间');
@@ -1051,6 +1080,8 @@ class CourseguideController extends AdminBaseController
             $data['addtime'] = $nowtime;
             $data['addtime'] = 1;
 
+            $this->checkCourse($data);
+
             $res = CourseCopyModel::where('id', '=', $id)->update($data, true);
             if (!$res) {
                 $this->error("编辑失败！");
@@ -1058,6 +1089,25 @@ class CourseguideController extends AdminBaseController
 
             $this->success("编辑成功！", url("courseguide/addStudent", ['id' => $id]));
         }
+    }
+
+    /**
+     * 是否已存在课程
+     */
+    public function checkCourse($data)
+    {
+        $isexists = DB::name('course_copy');
+        if (!empty($data['id'])) {
+            $isexists = $isexists->where('id', '<>', $data['id']);
+        }
+        $isexists = $isexists->where('uid', '=', $data['uid'])
+            ->where('starttime', '=', $data['starttime'])
+            ->where('status', '<>', -1)
+            ->find();
+        if ($isexists) {
+            $this->error("该老师在这个时段已存在课程！");
+        }
+        return;
     }
 
     /**
