@@ -25,7 +25,10 @@
                     <div class="layui-tab layui-tab-brief">
                         <ul class="layui-tab-title layui-nav" id="tabHeader">
                             <li class="layui-nav-item"><a href="{:url('courseguide/index',['sort'=>$sort])}">课程列表</a></li>
+                            <li class="layui-nav-item"><a href="{:url('courseguide/coursetable',['sort'=>$sort])}">课表模式</a></li>
                             <!--                                <li><a href="javascript:admin.openIframeLayer('{:url('course/add',['sort'=>$sort])}','{:lang('ADMIN_USER_ADD')}',{btn: ['保存','关闭'],area:['640px','50%'],end:function(){location.reload();}});">{:lang('ADD')}</a></li>-->
+                            <li class="layui-nav-item"><a href="{:url('courseguide/addCourse',['sort'=>$sort])}">新增课程</a></li>
+                            <li class="layui-nav-item"><a href="{:url('courseguide/batchaddcourse',['sort'=>$sort])}">批量加课</a></li>
                             <li class="layui-this layui-nav-item"><a href="">新增学生</a></li>
                         </ul>
                     </div>

@@ -1,0 +1,153 @@
+<include file="public@header" />
+<link rel="stylesheet" href="__TMPL__/public/assets/css/animation.css">
+
+<style>
+.table img{
+    width:50px;
+}
+.layui-table[lay-size=lg] td, .layui-table[lay-size=lg] th{
+    padding: 10px 10px;
+}
+</style>
+</head>
+<body>
+	<div class="layui-fluid">
+        <div class="layui-row">
+
+            <div class="layui-page-header">
+                <div class="layui-card">
+                    <div class="layui-page-header-content">
+                        <div class="layui-card-body">
+                            <div class="layui-ui-page-header-title" >
+                                课表模式<span class="layui-badge-rim page-content">管理课程和排课</span>
+                            </div>
+                        </div>
+                        <div class="layui-tab layui-tab-brief">
+                            <ul class="layui-tab-title layui-nav" id="tabHeader">
+                                <li class="layui-nav-item"><a href="{:url('courseguide/index',['sort'=>$sort])}">课程列表</a></li>
+                                <li class="layui-this layui-nav-item"><a href="{:url('courseguide/coursetable',['sort'=>$sort])}">课表模式</a></li>
+                                <!--                                <li><a href="javascript:admin.openIframeLayer('{:url('course/add',['sort'=>$sort])}','{:lang('ADMIN_USER_ADD')}',{btn: ['保存','关闭'],area:['640px','50%'],end:function(){location.reload();}});">{:lang('ADD')}</a></li>-->
+                                <li class="layui-nav-item"><a href="{:url('courseguide/addCourse',['sort'=>$sort])}">新增课程</a></li>
+                                <li class="layui-nav-item"><a href="{:url('courseguide/batchaddcourse',['sort'=>$sort])}">批量加课</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-page-content">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <form class="layui-form" method="post" action="{:url('courseguide/coursetable',['sort'=>$sort])}">
+                            <div class="layui-form-item layuiadmin-card-text" style="margin-bottom: 0;">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">学级</label>
+                                    <div class="layui-input-inline">
+                                        <select class="form-control" name="gradeid">
+                                            <option value="">全部</option>
+                                            <volist name="grade" id="v">
+                                                <option value="{$v['id']}" <if condition="input('request.gradeid') neq '' && input('request.gradeid') eq $v['id']">selected</if>>{$v['name']}</option>
+                                            </volist>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">老师</label>
+                                    <div class="layui-input-inline">
+                                        <select class="layui-input" name="uid">
+                                            <option value="">全部</option>
+                                            <volist name="teachers" id="v">
+                                                <option value="{$key}" <if condition="input('request.uid') neq '' && input('request.uid') eq $key">selected</if>>{$v['user_nickname']}</option>
+                                            </volist>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">科目</label>
+                                    <div class="layui-input-inline">
+                                        <select class="form-control" name="classid">
+                                            <option value="">全部</option>
+                                            <volist name="classs" id="v">
+                                                <option value="{$v['id']}" <if condition="input('request.classid') neq '' && input('request.classid') eq $v['id']">selected</if>>{$v['name']}</option>
+                                            </volist>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">教室</label>
+                                    <div class="layui-input-inline">
+                                        <select class="form-control" name="classroomid">
+                                            <option value="">全部</option>
+                                            <volist name="classrooms" id="v">
+                                                <option value="{$key}" <if condition="input('request.classroomid') neq '' && input('request.classroomid') eq $key">selected</if>>{$v}</option>
+                                            </volist>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">年</label>
+                                    <div class="layui-input-inline">
+                                        <input type="number" class="layui-input" name="year" value="{$year}" placeholder="2023">
+                                    </div>
+                                </div>
+
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">月</label>
+                                    <div class="layui-input-inline">
+                                        <input type="number" class="layui-input" name="month" value="{$month}" placeholder="1">
+                                    </div>
+                                </div>
+
+                                <div class="layui-inline">
+                                    <div class="layui-input-inline">
+                                        <input type="submit" class="layui-btn btn-primary" value="搜索" />
+                                        <a class="layui-btn layui-btn-danger btn-danger" href="{:url('courseguide/coursetable',['sort'=>$sort])}">清空</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-page-content">
+                <div class="layui-card-body">
+                    <div class="layui-ui-page-header-title" >
+                        {$yearmonth}<span class="layui-badge-rim page-content">可以点击课表操作</span>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <form method="post" class="layui-card-body js-ajax-form" action="{:url('courseguide/listOrder')}">
+<!--                        <button class="layui-btn js-ajax-submit" type="submit">新增课程</button>-->
+                        <a class="layui-bo layui-bo-small layui-bo-checked" href="{:url("courseguide/addCourse",array('sout'=>0))}">新增课程</a>
+                        <a class="layui-bo layui-bo-small layui-bo-waring" href="{:url("courseguide/batchAddCourse",array('sout'=>0))}">批量加课</a>
+                        <table class="layui-table" lay-even lay-size="lg">
+                            <thead>
+                            <tr>
+                                <foreach name="thead" item="v">
+                                    <td>{:$v}</td>
+                                </foreach>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <foreach name="timetables" item="vo">
+                                <tr>
+                                    <foreach name="vo" item="vovo">
+                                        <td>{:$vovo}</td>
+                                    </foreach>
+                                </tr>
+                            </foreach>
+                            </tbody>
+                        </table>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+	</div>
+	<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

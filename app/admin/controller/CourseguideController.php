@@ -44,6 +44,7 @@ class CourseguideController extends AdminBaseController
         }
         return $courseTime[$k] ?? '';
     }
+
     /**
      * 获取课程状态
      * @param string $k 键
@@ -132,6 +133,7 @@ class CourseguideController extends AdminBaseController
         $classrooms = [
             '1' => '大教室',
             '2' => '小教室',
+            '3' => '校外',
         ];
 
         if ($k === '') {
@@ -383,7 +385,13 @@ class CourseguideController extends AdminBaseController
             $map[] = ['uid', '=', $uid];
         }
 
-        $list = CourseCopyModel::where($map)->order("id desc")->paginate(15, false, ['query' => input()]);
+        $list = CourseCopyModel::where($map);
+        if ($gradeid || $uid || $classid || $classroomid || $start_time) {
+            $list = $list->order("starttime desc");
+        } else {
+            $list = $list->order("id desc");
+        }
+        $list = $list->paginate(15, false, ['query' => input()]);
 
         $list->each(function ($v) {
 
@@ -429,6 +437,164 @@ class CourseguideController extends AdminBaseController
 
         // 渲染模板输出
         return $this->fetch('index');
+    }
+
+    /**
+     * 获取本周所有日期
+     */
+    public function getMonthDatePublic($year = 2023, $month = 6){ // 上周=-1 本周=0 下周=1
+        $start_time = strtotime($year.'-'.$month.'-01');  //获取本月第一天时间戳
+        $j = date("t", $start_time); //获取月份天数
+        $date = array();
+        for($i=0;$i<$j;$i++){
+            $date[] = date('Y-m-d',$start_time+$i*86400); //每隔一天赋值给数组
+        }
+
+        return $date;
+    }
+
+    /*
+     * 课程表
+     * @return mixed
+     */
+    public function coursetable()
+    {
+        $data = $this->request->param();
+        $map  = [];
+
+        $weeks = $this->getWeeks();
+
+        $year = $data['year'] ?? date('Y');
+        $month = $data['month'] ?? date('m');
+        $monthdate = $this->getMonthDatePublic($year, $month);
+
+        $thead = [0=>''];
+        foreach ($monthdate as $v) {
+            $w = date('w', strtotime($v));
+            $W = $weeks[$w];
+            $d = substr($v, -2);
+            if ($w == 6 || $w == 0) {
+                $thead[] = '<font color="#2d8cf0">'.$W.PHP_EOL.$d.'</font>';
+            } else {
+                $thead[] = $W.PHP_EOL.$d;
+            }
+        }
+        $this->assign('thead', $thead);
+        $yearmonth = $year.'年'.$month.'月';
+        $this->assign('year', $year);
+        $this->assign('month', $month);
+        $this->assign('yearmonth', $yearmonth);
+
+        $coursetime = $this->getCourseTime();
+
+        $timetables = [];
+        $startcoursetimes = array_column($coursetime, 'startcoursetime');
+        foreach ($startcoursetimes as $k => $v) {
+            $timetables[$v]['side'] = $v.PHP_EOL.$coursetime[$k]['endcoursetime'];
+            foreach ($monthdate as $vv) {
+                $mintime = $mintime??$vv.' '.$v;
+                $timetables[$v][$vv.' '.$v] = '';
+                $maxtime = $vv.' '.$v;
+            }
+        }
+        $mintime = strtotime($mintime);
+        $maxtime = strtotime($maxtime);
+
+        $sort  = $data['sort'] ?? '1';
+//        $map[] = ['sort', '=', $sort];
+
+        $start_time = $mintime;
+        $end_time   = $maxtime;
+
+        if ($start_time != "") {
+            $map[] = ['starttime', '>=', $start_time];
+        }
+
+        if ($end_time != "") {
+            $map[] = ['starttime', '<=', $end_time];
+        }
+
+        $status = $data['status'] ?? '';
+        if ($status != '') {
+            $map[] = ['status', '=', $status];
+        } else {
+            $map[] = ['status', '=', 1];
+        }
+
+        $gradeid = $data['gradeid'] ?? '';
+        if ($gradeid != '') {
+            $map[] = ['gradeid', '=', $gradeid];
+        }
+
+        $classroomid = $data['classroomid'] ?? '';
+        if($classroomid!=''){
+            $map[]=['classroomid','=',$classroomid];
+        }
+
+        $classid = $data['classid'] ?? '';
+        if($classid!=''){
+            $map[]=['classid','=',$classid];
+        }
+
+        $paytype = $data['paytype'] ?? '';
+        if ($paytype != '') {
+            $map[] = ['paytype', '=', $paytype];
+        }
+
+        $type = $data['type'] ?? '';
+        if ($type != '') {
+            $map[] = ['type', '=', $type];
+        }
+
+        $keyword = $data['keyword'] ?? '';
+        if ($keyword != '') {
+            $map[] = ['name', 'like', '%' . $keyword . '%'];
+        }
+
+        $uid = $data['uid'] ?? '';
+        if ($uid != '') {
+            $map[] = ['uid', '=', $uid];
+        }
+
+        $list = CourseCopyModel::where($map);
+        if ($gradeid || $uid || $classid || $classroomid || $start_time) {
+            $list = $list->order("starttime desc");
+        } else {
+            $list = $list->order("id desc");
+        }
+
+        $list = $list->column('*','id');
+        $classs = $this->getClass();
+
+        foreach ($list as $k => &$v) {
+            $startcoursetime = substr(date('Y-m-d H:i', $v['starttime']), -5);
+            $startdatetime = date('Y-m-d H:i', $v['starttime']);
+            $html = '<a class="" href="/admin/courseguide/addStudent/id/'.$v['id'].'">'.$classs[$v['classid']]['name'].'</a>';
+            $timetables[$startcoursetime][$startdatetime] = $html;
+        }
+
+        if ($sort == 2) {
+            $this->assign('types', $this->getLiveTypes());
+        } else {
+            $this->assign('types', $this->getTypes());
+        }
+
+        $this->assign('classs', $classs);
+        $this->assign([
+            'timetables'       => $timetables,
+            'sort'       => $sort,
+            'weeks'     => $weeks,
+            'teachers'     => $this->getTeachers(),
+            'classrooms'     => $this->getClassrooms(),
+            'status'     => $this->getStatus(),
+            'grade'      => $this->getGrade(),
+            'paytypes'   => $this->getPayTypes(),
+            'trialtypes' => $this->getTrialTypes(),
+            'livetype'   => $this->getLiveTypes()
+        ]);
+
+        // 渲染模板输出
+        return $this->fetch();
     }
 
     /*
@@ -948,16 +1114,7 @@ class CourseguideController extends AdminBaseController
             while ($endtime <= $final_time) {
                 $data['starttime'] = $starttime;
                 $data['endtime'] = $endtime;
-                $isexists = DB::name('course_copy')
-                    ->where('uid', '=', $data['uid'])
-                    ->where('starttime', '=', $data['starttime'])
-                    ->where('status', '<>', -1)
-                    ->find();
-                if ($isexists) {
-                    $starttime += 60*60*24*7;
-                    $endtime += 60*60*24*7;
-                    continue; // 已存在课程就跳过
-                }
+                $this->checkCourse($data);
                 CourseCopyModel::create($data, true);
                 $starttime += 60*60*24*7;
                 $endtime += 60*60*24*7;

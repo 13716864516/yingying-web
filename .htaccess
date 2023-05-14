@@ -16,3 +16,25 @@ $list = Db::name('users')
             ->where('type', '=', 1)
             ->order("id desc")
             ->column('*','id');
+
+
+                                    <td>
+                                        <if condition="$vo['sort'] eq 1">
+                                            <a class="layui-bo layui-bo-small layui-bo-succes js-ajax-dialog-btn" href='{:url("lesson/index",array("courseid"=>$vo["id"]))}'>课时管理</a>
+                                            <div class="new-divider new-divider-vertical"></div>
+                                        </if>
+
+                                        <a class="layui-bo layui-bo-small layui-bo-succes" href='{:url("coursebuy/index",array("courseid"=>$vo["id"]))}'>购买详情</a>
+                                        <div class="new-divider new-divider-vertical"></div>
+
+                                        <if condition="$vo['status'] gt 0">
+                                            <a class="layui-bo layui-bo-small layui-bo-waring js-ajax-dialog-btn" href="{:url("course/setstatus",array("id"=>$vo["id"],"status"=>"-2"))}">下架</a>
+                                            <else/>
+                                            <a class="layui-bo layui-bo-small layui-bo-succes js-ajax-dialog-btn" href="{:url("course/setstatus",array("id"=>$vo["id"],'status'=>'1'))}">上架</a>
+                                        </if>
+                                        <div class="new-divider new-divider-vertical"></div>
+
+                                        <a class="layui-bo layui-bo-small layui-bo-checked" href="{:url("course/edit",array("id"=>$vo["id"]))}">{:lang('EDIT')}</a>
+                                        <div class="new-divider new-divider-vertical"></div>
+                                        <a class="layui-bo layui-bo-small layui-bo-close js-ajax-delete" href="{:url('course/del',array('id'=>$vo['id']))}" <if condition="$vo['views'] gt 0">data-msg="已有{$vo['views']}人学习，确定要删除么？"</if>>{:lang('DELETE')}</a>
+                                    </td>

@@ -19,14 +19,16 @@
                     <div class="layui-page-header-content">
                         <div class="layui-card-body">
                             <div class="layui-ui-page-header-title" >
-                                课程安排<span class="layui-badge-rim page-content">管理课程和排课</span>
+                                课程列表<span class="layui-badge-rim page-content">管理课程和排课</span>
                             </div>
                         </div>
                         <div class="layui-tab layui-tab-brief">
                             <ul class="layui-tab-title layui-nav" id="tabHeader">
                                 <li class="layui-this layui-nav-item"><a href="{:url('courseguide/index',['sort'=>$sort])}">课程列表</a></li>
+                                <li class="layui-nav-item"><a href="{:url('courseguide/coursetable',['sort'=>$sort])}">课表模式</a></li>
 <!--                                <li><a href="javascript:admin.openIframeLayer('{:url('course/add',['sort'=>$sort])}','{:lang('ADMIN_USER_ADD')}',{btn: ['保存','关闭'],area:['640px','50%'],end:function(){location.reload();}});">{:lang('ADD')}</a></li>-->
                                 <li class="layui-nav-item"><a href="{:url('courseguide/addCourse',['sort'=>$sort])}">新增课程</a></li>
+                                <li class="layui-nav-item"><a href="{:url('courseguide/batchaddcourse',['sort'=>$sort])}">批量加课</a></li>
                             </ul>
                         </div>
                     </div>
@@ -149,7 +151,7 @@
                     <form method="post" class="layui-card-body js-ajax-form" action="{:url('courseguide/listOrder')}">
 <!--                        <button class="layui-btn js-ajax-submit" type="submit">新增课程</button>-->
                         <a class="layui-bo layui-bo-small layui-bo-checked" href="{:url("courseguide/addCourse",array('sout'=>0))}">新增课程</a>
-                        <a class="layui-bo layui-bo-small layui-bo-waring" href="{:url("courseguide/batchAddCourse",array('sout'=>0))}">批量加课</a>
+                        <a class="layui-bo layui-bo-small layui-bo-waring" href="{:url("courseguide/batchAddCourse",array('sort'=>0))}">批量加课</a>
                         <table class="layui-table treeTable" id="menus-table" lay-even lay-skin="nob" lay-size="lg">
                             <thead>
                             <tr>
@@ -169,6 +171,7 @@
 <!--                                    <th>课时数</th>-->
 <!--                                </if>-->
                                 <th>教室</th>
+                                <th>消耗课时</th>
                                 <th>开始时间</th>
                                 <th>结束时间</th>
                                 <th>星期</th>
@@ -203,6 +206,7 @@
 <!--                                    </if>-->
 <!--                                    <td>{$vo['views']}</td>-->
                                     <td>{$classrooms[$vo['classroomid']]}</td>
+                                    <td>{:$vo.lessons}</td>
                                     <td>{:date('Y-m-d H:i:s',$vo['starttime'])}</td>
                                     <td>{:date('Y-m-d H:i:s',$vo['endtime'])}</td>
                                     <td>{:$weeks[date('w',$vo.starttime)]}</td>

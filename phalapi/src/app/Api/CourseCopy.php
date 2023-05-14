@@ -103,6 +103,7 @@ class CourseCopy extends Api
         $classrooms = [
             '1' => '大教室',
             '2' => '小教室',
+            '3' => '校外',
         ];
 
         if ($k === '') {
@@ -237,12 +238,12 @@ class CourseCopy extends Api
         $courseclass = $Domain_Course->getClass();
         $classs_new = [];
         foreach ($courseclass as &$v) {
-            $len = mb_strlen($v['name']);
-            if ($len > 5) {
-                $v['name'] = mb_substr($v['name'],0,3);
-            } elseif ($len > 3) {
-                $v['name'] = mb_substr($v['name'],0,2);
-            }
+//            $len = mb_strlen($v['name']);
+//            if ($len > 5) {
+//                $v['name'] = mb_substr($v['name'],0,3);
+//            } elseif ($len > 3) {
+//                $v['name'] = mb_substr($v['name'],0,2);
+//            }
             $classs_new[$v['id']] = $v['name'];
         }
 
