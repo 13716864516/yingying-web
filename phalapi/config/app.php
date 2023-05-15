@@ -63,7 +63,7 @@ return array(
         // 上传文件名前缀
         'preffix' => '', 
         //区域上传域名(服务端)  https://developer.qiniu.com/kodo/manual/1671/region-endpoint  非华东需配置
-        'upload_url' => 'http://cname.hyj-kj.cn',
+        'upload_url' => 'https://up-z2.qiniup.com', // 非华东需配置
     ),
     
     /**
