@@ -27,7 +27,7 @@ return array(
     'servers' => array(
         'db_master' => array(                       // 服务器标记
             'type'      => 'mysql',                 // 数据库类型，暂时只支持：mysql, sqlserver
-            'host'      => '127.0.0.1',             // 数据库域名
+            'host'      => 'ddos.hyj-kj.cn',             // 数据库域名
             'name'      => 'wanyue',               // 数据库名字
             'user'      => 'wanyue',                      // 数据库用户名
             'password'  => '123456aA',	                    // 数据库密码

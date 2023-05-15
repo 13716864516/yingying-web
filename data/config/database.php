@@ -19,7 +19,7 @@ return [
     // 数据库类型
     'type'     => 'mysql',
     // 服务器地址
-    'hostname' => '127.0.0.1',
+    'hostname' => 'ddos.hyj-kj.cn',
     // 数据库名
     'database' => 'wanyue',
     // 用户名
@@ -36,7 +36,7 @@ return [
     //#COOKIE_PREFIX#
 	
 	/* redis */
-	'REDIS_HOST' => '127.0.0.1',
+	'REDIS_HOST' => 'ddos.hyj-kj.cn',
 	'REDIS_AUTH' => '123456aA',/* REDIS必须设置密码并配置 */
 	'REDIS_PORT' => "6379",
 	'REDIS_SELECT' => "20",/* REDIS_SELECT的数字可以自定义【作用：宝塔中有创建有多个站点多个项目，使用redis时进行区分，防止出现搭建错误】，确保其他代码文件配置REDIS_SELECT时填写的数字一致即可 */

@@ -34,7 +34,7 @@ return array(
     ),
 
     /* redis信息 */
-    'REDIS_HOST' => '127.0.0.1',
+    'REDIS_HOST' => 'ddos.hyj-kj.cn',
     'REDIS_AUTH' => '123456aA',
     'REDIS_PORT' => "6379",
     'REDIS_SELECT' => "20",/* REDIS_SELECT的数字可以自定义【作用：宝塔中有创建有多个站点多个项目，使用redis时进行区分，防止出现搭建错误】，确保其他代码文件配置REDIS_SELECT时填写的数字一致即可 */
@@ -46,24 +46,24 @@ return array(
 	"authcode" => 'uV1sDvmUeV9Lcva00i',
     
     /* 存储方式 0本地 1七牛*/
-    'uptype' => "0",
+    'uptype' => "1",
 
     /**
      * 七牛相关配置
      */
     'Qiniu' =>  array(
         //ak
-        'access_key' => '',
+        'access_key' => 'AOq2WgLZ8q5GTCGs0ImgapFNLmsWO1Vdz6yynhbn',
         //sk
-        'secret_key' => '',
+        'secret_key' => 'nJiy3opXviRDNRpFi0aAXq5LB8nO2j09ITILQjw0',
         //存储空间
-        'space_bucket' => '',
+        'space_bucket' => 'yuanqiyang',
         //cdn加速域名 格式：http(s)://a.com
-        'space_host' => '',
+        'space_host' => 'http://cname.hyj-kj.cn',
         // 上传文件名前缀
         'preffix' => '', 
         //区域上传域名(服务端)  https://developer.qiniu.com/kodo/manual/1671/region-endpoint  非华东需配置
-        //'upload_url' => '',
+        'upload_url' => 'http://cname.hyj-kj.cn',
     ),
     
     /**
